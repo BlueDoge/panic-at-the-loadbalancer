@@ -3,20 +3,25 @@
 
 using System;
 using System.Collections.Generic;
-using Amazon.EC2;
-using Amazon.ElasticLoadBalancingV2;
 
 namespace BlueDogeTools.panic_at_the_loadbalancer
 {
 	public class Toolkit
 	{
+		private Credentials? credentials;
+		private ECCInstanceFinder? eccInstanceFinder;
 		private UserInterface _userInterface;
 		private RemoteShell _remoteShell;
+
+		private void RegisterTargetToTargetGroup()
+		{
+		}
+
 		public Toolkit(string[] args)
 		{
-			_userInterface = new UserInterface(args);
+			_userInterface = new UserInterface(args, ref credentials);
 			// actually run the user interface
-			_userInterface.Run();
+			_userInterface.Run(ref credentials, ref eccInstanceFinder);
 
 			// now build the shell
 			_remoteShell = new RemoteShell();
