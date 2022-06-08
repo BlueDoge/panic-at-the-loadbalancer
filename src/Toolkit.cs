@@ -10,8 +10,9 @@ namespace BlueDogeTools.panic_at_the_loadbalancer
 	{
 		private Credentials? credentials;
 		private ECCInstanceFinder? eccInstanceFinder;
-		private UserInterface _userInterface;
-		private RemoteShell _remoteShell;
+		private UserInterface userInterface;
+		private RemoteShell shell;
+		private ELBController lbController;
 
 		private void RegisterTargetToTargetGroup()
 		{
@@ -19,12 +20,13 @@ namespace BlueDogeTools.panic_at_the_loadbalancer
 
 		public Toolkit(string[] args)
 		{
-			_userInterface = new UserInterface(args, ref credentials);
-			// actually run the user interface
-			_userInterface.Run(ref credentials, ref eccInstanceFinder);
+			userInterface = new UserInterface(args, ref credentials, ref eccInstanceFinder, true);
 
-			// now build the shell
-			_remoteShell = new RemoteShell();
+			// now build the shell and autorun the "health check" or provisioner
+			shell = new RemoteShell(userInterface.GetIp(), userInterface.GetScriptFilepath(), true);
+
+			// access lb and add it back
+			lbController = new ELBController(ref credentials);
 		}
 	}
 }

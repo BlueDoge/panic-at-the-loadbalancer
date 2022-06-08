@@ -16,6 +16,7 @@ namespace BlueDogeTools.panic_at_the_loadbalancer
 		private string? GivenTargetIpAddress;
 		private string? GivenTargetPrivateIpAddress;
 		private string? GivenLoadbalancerTargetGroupArn;
+		private string? GivenScriptFilepath;
 
 		public Amazon.RegionEndpoint GetRegion()
 		{
@@ -58,9 +59,27 @@ namespace BlueDogeTools.panic_at_the_loadbalancer
 			return GivenTargetPrivateIpAddress;
 		}
 
-		public UserInterface(string[] args, ref Credentials? awsCredentials)
+		public string GetScriptFilepath()
+		{
+			if (GivenScriptFilepath == null)
+			{
+				throw new Exception("Error: script filepath not yet resolved.");
+			}
+			return GivenScriptFilepath;
+		}
+
+		public UserInterface(string[] args, ref Credentials? awsCredentials, ref ECCInstanceFinder? eccInstanceFinder, bool bAutoRun = false)
 		{
 			Init(args, ref awsCredentials);
+
+			if(bAutoRun)
+			{
+				bool result = Run(ref awsCredentials, ref eccInstanceFinder);
+				if (!result && awsCredentials == null)
+				{
+					throw new Exception("Error: failed to create credentials!");
+				}
+			}
 		}
 
 		private void Init(string[] args, ref Credentials? awsCredentials)
@@ -172,10 +191,10 @@ namespace BlueDogeTools.panic_at_the_loadbalancer
 
 			// grab the instance ID from the provided IPAddress
 			Console.WriteLine("(You can select instances by Public IPv4, Private IPv4, or Instance ID)");
-			Console.WriteLine("(Acceptable responses: public ip, private ip, id, instance id)");
+			Console.WriteLine("(Acceptable responses: ip [assumes public], public ip, private ip, id, instance id)");
 			Console.Write("Instance Selection Mode [Public IPv4]: ");
 			string Data = (Console.ReadLine() ?? "Public IPv4").ToLower();
-			if (Data == "public ip")
+			if (Data == "ip" || Data == "public ip")
 			{
 				Console.Write("Provide the Public IPv4: ");
 				string? IP = Console.ReadLine();
@@ -223,18 +242,33 @@ namespace BlueDogeTools.panic_at_the_loadbalancer
 			}
 		}
 
+		private void AskForHealthcheckScript()
+		{
+			Console.Write("Provide the path to the healthcheck script [./remote-health.sh]: ");
+			string? Data = Console.ReadLine();
+			if(Data == null || Data.Trim() == "")
+			{
+				GivenScriptFilepath = "remote-health.sh";
+			}
+			else
+			{
+				GivenScriptFilepath = Data;
+			}
+		}
+
 		public bool Run(ref Credentials? awsCredentials, ref ECCInstanceFinder? eccInstanceFinder)
 		{
 			CleanScreen();
 			AskForCredentials(ref awsCredentials);
-			AskForRegion();
-			AskForTargettedMachine(ref awsCredentials, ref eccInstanceFinder);
-			AskForLoadbalancerInfo();
 			// return false if there isn't at least an accesskey and secretkey
 			if (awsCredentials == null)
 			{
 				return false;
 			}
+			AskForRegion();
+			AskForTargettedMachine(ref awsCredentials, ref eccInstanceFinder);
+			AskForLoadbalancerInfo();
+			AskForHealthcheckScript();
 
 			return true;
 		}

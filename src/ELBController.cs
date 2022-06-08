@@ -3,20 +3,17 @@
 
 using System;
 using System.Collections.Generic;
+using Amazon.Runtime;
+using Amazon.ElasticLoadBalancingV2;
+using Amazon.ElasticLoadBalancingV2.Model;
 
 namespace BlueDogeTools.panic_at_the_loadbalancer
 {
-	public class RemoteShell
+	public class ELBController
 	{
-		private bool bIsHealthy = false;
-
-		public bool IsHealthy()
+		public ELBController(ref Credentials? awsCredentials)
 		{
-			return bIsHealthy;
-		}
-
-		public RemoteShell(string ipAddress, string scriptFilepath, bool bAutoRun = false)
-		{
+			if (awsCredentials == null) throw new ArgumentNullException("Error: invalid AWS Creds");
 		}
 	}
 }
