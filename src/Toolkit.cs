@@ -25,6 +25,11 @@ namespace BlueDogeTools.panic_at_the_loadbalancer
 			// now build the shell and autorun the "health check" or provisioner
 			shell = new RemoteShell(userInterface.GetIp(), userInterface.GetScriptFilepath(), true);
 
+			if (!shell.IsHealthy())
+			{
+				throw new Exception("Error: the ssh instance claims it never achieved a healthy state. This situation may require human intervention.");
+			}
+
 			// access lb and add it back
 			lbController = new ELBController(ref credentials);
 		}
