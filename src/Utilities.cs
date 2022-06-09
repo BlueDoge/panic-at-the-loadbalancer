@@ -13,15 +13,15 @@ namespace BlueDogeTools.panic_at_the_loadbalancer
 			Console.WriteLine("[{0}] {1}", Tag, Message);
 		}
 
-		public static SecureString ReadSecureLine(bool bAddChars = true, char charToAdd = '*')
+		public static SecureString ReadSecureLine(bool bOverride = true, bool bAddChars = true, char charToAdd = '*')
 		{
 			SecureString secureLine = new SecureString();
-			var keyData = Console.ReadKey(true);
+			var keyData = Console.ReadKey(bOverride);
 			while(keyData.Key != ConsoleKey.Enter)
 			{
 				secureLine.AppendChar(keyData.KeyChar);
-				keyData = Console.ReadKey(true);
-				if(bAddChars)
+				keyData = Console.ReadKey(bOverride);
+				if(bAddChars && bOverride)
 				{
 					Console.Write(charToAdd); // would add *'s if defaulted
 				}
