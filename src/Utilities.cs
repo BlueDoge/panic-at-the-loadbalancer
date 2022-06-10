@@ -8,9 +8,10 @@ namespace BlueDogeTools.panic_at_the_loadbalancer
 {
 	public static class Utilities
 	{
-		public static void WritePrompt(string Message, char embeddedPadding = '>')
+		public static void WritePrompt(string Message, int embeddedDepth = 1, char embeddedPadding = '>')
 		{
-			Console.Write("{0}{1} ", embeddedPadding, Message);
+			// PadLeft with the Length of the message + the depth of the embedding. Starting with 1
+			Console.Write(Message.PadLeft(embeddedDepth + Message.Length, embeddedPadding));
 		}
 
 		public static void WriteLog(string Tag, string Message)
