@@ -12,6 +12,9 @@ namespace BlueDogeTools.panic_at_the_loadbalancer
 	public class Credentials
 	{
 		public AWSCredentials? awsCredentials;
+		public SecureString? sshUsername;
+		public SecureString? sshPassword;
+
 		public Credentials(SecureString accessKey, SecureString secretKey, SecureString? sessionKey = null)
 		{
 			if (sessionKey != null)

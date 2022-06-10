@@ -115,22 +115,6 @@ namespace BlueDogeTools.panic_at_the_loadbalancer
 			return false;
 		}
 
-		private void AskForCredentials(ref Credentials? awsCredentials)
-		{
-			if (!AskAboutAWSProfiles(ref awsCredentials))
-			{
-				SecureString? accessKey;
-				SecureString? secretKey;
-				SecureString? sessionKey;
-				AskForAccessKey(out accessKey);
-				AskForSecretKey(out secretKey);
-				AskForSessionKey(out sessionKey);
-
-				// sessionKey can be null and the underlying class handles it appropriately
-				awsCredentials = new Credentials(accessKey, secretKey, sessionKey);
-			}
-		}
-
 		private void AskForAccessKey(out SecureString accessKey)
 		{
 			Utilities.WritePrompt("Enter access key: ");
@@ -160,6 +144,36 @@ namespace BlueDogeTools.panic_at_the_loadbalancer
 			{
 				sessionKey = null;
 			}
+		}
+
+		private void AskForSSHCredentials(ref Credentials credentials)
+		{
+			Utilities.WritePrompt("Enter SSH Username: ");
+			credentials.sshUsername = Utilities.ReadSecureLine(false);
+
+			Utilities.WritePrompt("Enter SSH Password: ");
+			credentials.sshPassword = Utilities.ReadSecureLine();
+		}
+
+		private void AskForCredentials(ref Credentials? awsCredentials)
+		{
+			if (!AskAboutAWSProfiles(ref awsCredentials))
+			{
+				SecureString? accessKey;
+				SecureString? secretKey;
+				SecureString? sessionKey;
+				AskForAccessKey(out accessKey);
+				AskForSecretKey(out secretKey);
+				AskForSessionKey(out sessionKey);
+
+				// sessionKey can be null and the underlying class handles it appropriately
+				awsCredentials = new Credentials(accessKey, secretKey, sessionKey);
+			}
+			if(awsCredentials == null)
+			{
+				throw new NullReferenceException("Error: aws credentials not resolved!");
+			}
+			AskForSSHCredentials(ref awsCredentials);
 		}
 
 		private void AskForRegion()
