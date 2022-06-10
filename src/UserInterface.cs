@@ -100,7 +100,7 @@ namespace BlueDogeTools.panic_at_the_loadbalancer
 			string? enteredData = Console.ReadLine();
 			if (enteredData == null || enteredData.Trim() == "" || enteredData.ToLower().Substring(0, 1) == "y")
 			{
-				Utilities.WritePrompt("Which profile? [default] ");
+				Utilities.WritePrompt("Which profile? [default] ", 2);
 				enteredData = Console.ReadLine();
 				if(enteredData == null || enteredData.Trim() == "")
 				{
@@ -196,7 +196,7 @@ namespace BlueDogeTools.panic_at_the_loadbalancer
 			string Data = (Console.ReadLine() ?? "Public IPv4").ToLower();
 			if (Data == "ip" || Data == "public ip")
 			{
-				Utilities.WritePrompt("Provide the Public IPv4: ");
+				Utilities.WritePrompt("Provide the Public IPv4: ", 2);
 				string? IP = Console.ReadLine();
 				if(IP == null) // also check if it even is a valid ip address
 				{
@@ -207,7 +207,7 @@ namespace BlueDogeTools.panic_at_the_loadbalancer
 			}
 			else if (Data == "private ip")
 			{
-				Utilities.WritePrompt("Provide the Private IPv4: ");
+				Utilities.WritePrompt("Provide the Private IPv4: ", 2);
 				string? IP = Console.ReadLine();
 				if(IP == null) // also check if it even is a valid ip address
 				{
@@ -218,7 +218,7 @@ namespace BlueDogeTools.panic_at_the_loadbalancer
 			}
 			else if (Data == "id" || Data == "instance id")
 			{
-				Utilities.WritePrompt("Provide the Instance ID: ");
+				Utilities.WritePrompt("Provide the Instance ID: ", 2);
 				string? ID = Console.ReadLine();
 				if(ID == null) // also check if it even is a valid instance id [won't be perfect]
 				{
