@@ -96,11 +96,11 @@ namespace BlueDogeTools.panic_at_the_loadbalancer
 			// the method should ask if we want to select the AWS Profile
 			// then use the profile provided to load up Credentials using the SDK
 			// return true if we're using AWS profiles and have asked which one, so we'd skip asking about access/secret/session key info.
-			Console.Write("Use default profile? [Y/n] ");
+			Utilities.WritePrompt("Use default profile? [Y/n] ");
 			string? enteredData = Console.ReadLine();
 			if (enteredData == null || enteredData.Trim() == "" || enteredData.ToLower().Substring(0, 1) == "y")
 			{
-				Console.Write("Which profile? [default] ");
+				Utilities.WritePrompt("Which profile? [default] ");
 				enteredData = Console.ReadLine();
 				if(enteredData == null || enteredData.Trim() == "")
 				{
@@ -133,19 +133,19 @@ namespace BlueDogeTools.panic_at_the_loadbalancer
 
 		private void AskForAccessKey(out SecureString accessKey)
 		{
-			Console.Write("Enter access key: ");
+			Utilities.WritePrompt("Enter access key: ");
 			accessKey = Utilities.ReadSecureLine();
 		}
 
 		private void AskForSecretKey(out SecureString secretKey)
 		{
-			Console.Write("Enter secret key: ");
+			Utilities.WritePrompt("Enter secret key: ");
 			secretKey = Utilities.ReadSecureLine();
 		}
 
 		private void AskForSessionKey(out SecureString? sessionKey)
 		{
-			Console.Write("Are we using a session key? [Y/n] ");
+			Utilities.WritePrompt("Are we using a session key? [Y/n] ");
 			string? enteredData = Console.ReadLine();
 			if (enteredData == null || enteredData.Trim() == "" || enteredData.ToLower().Substring(0, 1) == "y")
 			{
@@ -192,11 +192,11 @@ namespace BlueDogeTools.panic_at_the_loadbalancer
 			// grab the instance ID from the provided IPAddress
 			Console.WriteLine("(You can select instances by Public IPv4, Private IPv4, or Instance ID)");
 			Console.WriteLine("(Acceptable responses: ip [assumes public], public ip, private ip, id, instance id)");
-			Console.Write("Instance Selection Mode [Public IPv4]: ");
+			Utilities.WritePrompt("Instance Selection Mode [Public IPv4]: ");
 			string Data = (Console.ReadLine() ?? "Public IPv4").ToLower();
 			if (Data == "ip" || Data == "public ip")
 			{
-				Console.Write("Provide the Public IPv4: ");
+				Utilities.WritePrompt("Provide the Public IPv4: ");
 				string? IP = Console.ReadLine();
 				if(IP == null) // also check if it even is a valid ip address
 				{
@@ -207,7 +207,7 @@ namespace BlueDogeTools.panic_at_the_loadbalancer
 			}
 			else if (Data == "private ip")
 			{
-				Console.Write("Provide the Private IPv4: ");
+				Utilities.WritePrompt("Provide the Private IPv4: ");
 				string? IP = Console.ReadLine();
 				if(IP == null) // also check if it even is a valid ip address
 				{
@@ -218,7 +218,7 @@ namespace BlueDogeTools.panic_at_the_loadbalancer
 			}
 			else if (Data == "id" || Data == "instance id")
 			{
-				Console.Write("Provide the Instance ID: ");
+				Utilities.WritePrompt("Provide the Instance ID: ");
 				string? ID = Console.ReadLine();
 				if(ID == null) // also check if it even is a valid instance id [won't be perfect]
 				{
@@ -230,7 +230,7 @@ namespace BlueDogeTools.panic_at_the_loadbalancer
 
 		private void AskForLoadbalancerInfo()
 		{
-			Console.Write("Load balancer Target Group Arn: ");
+			Utilities.WritePrompt("Load balancer Target Group Arn: ");
 			string? Data = Console.ReadLine();
 			if (Data == null || Data.Trim() == "")
 			{
@@ -244,7 +244,7 @@ namespace BlueDogeTools.panic_at_the_loadbalancer
 
 		private void AskForHealthcheckScript()
 		{
-			Console.Write("Provide the path to the healthcheck script [./remote-health.sh]: ");
+			Utilities.WritePrompt("Provide the path to the healthcheck script [./remote-health.sh]: ");
 			string? Data = Console.ReadLine();
 			if(Data == null || Data.Trim() == "")
 			{

@@ -8,6 +8,11 @@ namespace BlueDogeTools.panic_at_the_loadbalancer
 {
 	public static class Utilities
 	{
+		public static void WritePrompt(string Message, char embeddedPadding = '>')
+		{
+			Console.Write("{0}{1} ", embeddedPadding, Message);
+		}
+
 		public static void WriteLog(string Tag, string Message)
 		{
 			Console.WriteLine("[{0}] {1}", Tag, Message);
