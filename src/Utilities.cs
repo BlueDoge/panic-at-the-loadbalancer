@@ -14,6 +14,15 @@ namespace BlueDogeTools.panic_at_the_loadbalancer
 			Console.Write(Message.PadLeft(embeddedDepth + Message.Length, embeddedPadding));
 		}
 
+		public static void WriteList(string[] OrderedList)
+		{
+			Int32 iter = 1;
+			foreach(var element in OrderedList)
+			{
+				Console.WriteLine("{0}. {1}", iter++, element);
+			}
+		}
+
 		public static void WriteLog(string Tag, string Message)
 		{
 			Console.WriteLine("[{0}] {1}", Tag, Message);
