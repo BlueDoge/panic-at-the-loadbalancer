@@ -280,14 +280,42 @@ namespace BlueDogeTools.panic_at_the_loadbalancer
 
 		private void AskForPostLeaveTargetGroupScript()
 		{
-			GivenScriptFilepath_Leaving = "";
+			Utilities.WritePrompt("Provide the path to the \"Post Leave Target Group\" script [./postleave.sh]: ");
+			string? userData = Console.ReadLine();
+			if(userData == null || userData.Trim() == "")
+			{
+				GivenScriptFilepath_Leaving = "postleave.sh";
+			}
+			else
+			{
+				GivenScriptFilepath_Leaving = userData;
+			}
 		}
 
 		private void AskAboutTargetGroupToLeave()
 		{
 			// Prompt the user about the ELB tg Arn, ask them if the Arn is the same as the one we're joining
 			// if it is different, then ask them what the old Arn was
-			GivenLeadbalancerTargetGroupArn_Leaving = "";
+			Utilities.WritePrompt("Is the Target Group we are joining the same as the one we are leaving [Y/n]? ", 2);
+			bool bSameGroupArn = false;
+			{
+				var userData = Console.ReadLine();
+				bSameGroupArn = userData == null || userData.ToLower().Substring(0, 1) == "y";
+			}
+			if(!bSameGroupArn)
+			{
+				Utilities.WritePrompt("Please provide the ELB Target Group Arn to leave: ", 3);
+				var userData = Console.ReadLine();
+				if (userData != null)
+				{
+					GivenLeadbalancerTargetGroupArn_Leaving = userData;
+
+				}
+				else
+				{
+					throw new NullReferenceException("Error: no elb tg arn provided!");
+				}
+			}
 		}
 
 		private void AskAboutMode()
@@ -297,6 +325,32 @@ namespace BlueDogeTools.panic_at_the_loadbalancer
 			// Default functionality is running a PreJoinTargetGroup script, join the instance to the target group arn if the script is successful, and move on
 			// Alternative functionality is removing an instance from a target group arn, running post leave target group script, if successful wait for user to authorize continuing.
 			//    Then perform the default functionality.
+
+			Console.WriteLine("This program has multiple modes. Please consider the options presented.");
+			Console.WriteLine();
+			Utilities.WriteList(new string[] {
+				"Default functionality - load up pre-join script, wait for 'okay' status, rejoin to target group"
+				, "Extended functionality - remove from target group, load post-remove script, wait for user response, then execute default functionality"
+			});
+			Console.WriteLine("Input the number of your preferred functionality: ");
+			Utilities.WritePrompt(" ");
+			var userData = Console.ReadLine();
+
+			if (userData == null || userData.Trim() == "")
+			{
+				if (userData == "1")
+				{
+					bIsExtendedFunctionality = false;
+				}
+				else if (userData == "2")
+				{
+					bIsExtendedFunctionality = true;
+				}
+				else
+				{
+					bIsExtendedFunctionality = false;
+				}
+			}
 
 			if (IsUpdater())
 			{
