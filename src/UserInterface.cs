@@ -15,8 +15,15 @@ namespace BlueDogeTools.panic_at_the_loadbalancer
 		private string? GivenTargetId;
 		private string? GivenTargetIpAddress;
 		private string? GivenTargetPrivateIpAddress;
+		// *TODO need to refactor the names of the 4 next strings lol
 		private string? GivenLoadbalancerTargetGroupArn;
-		private string? GivenScriptFilepath;
+		private string? GivenScriptFilepath; // *TODO let this be null if the user doesn't want a pre rejoin elb script
+		private string? GivenLeadbalancerTargetGroupArn_Leaving;
+		private string? GivenScriptFilepath_Leaving; // *TODO let this be null if the user doesn't want a post leave elb script
+		private bool bIsExtendedFunctionality = false;
+
+		public bool IsProvisioner() {  return !bIsExtendedFunctionality; }
+		public bool IsUpdater() { return bIsExtendedFunctionality; }
 
 		public Amazon.RegionEndpoint GetRegion()
 		{
@@ -256,6 +263,7 @@ namespace BlueDogeTools.panic_at_the_loadbalancer
 			}
 		}
 
+		// *TODO potentially rename this method
 		private void AskForHealthcheckScript()
 		{
 			Utilities.WritePrompt("Provide the path to the healthcheck script [./remote-health.sh]: ");
@@ -270,9 +278,37 @@ namespace BlueDogeTools.panic_at_the_loadbalancer
 			}
 		}
 
+		private void AskForPostLeaveTargetGroupScript()
+		{
+			GivenScriptFilepath_Leaving = "";
+		}
+
+		private void AskAboutTargetGroupToLeave()
+		{
+			// Prompt the user about the ELB tg Arn, ask them if the Arn is the same as the one we're joining
+			// if it is different, then ask them what the old Arn was
+			GivenLeadbalancerTargetGroupArn_Leaving = "";
+		}
+
+		private void AskAboutMode()
+		{
+			CleanScreen();
+			// List off possible methods for them to choose from, specifying how the program will function
+			// Default functionality is running a PreJoinTargetGroup script, join the instance to the target group arn if the script is successful, and move on
+			// Alternative functionality is removing an instance from a target group arn, running post leave target group script, if successful wait for user to authorize continuing.
+			//    Then perform the default functionality.
+
+			if (IsUpdater())
+			{
+				AskForPostLeaveTargetGroupScript();
+				AskAboutTargetGroupToLeave();
+			}
+		}
+
 		public bool Run(ref Credentials? awsCredentials, ref ECCInstanceFinder? eccInstanceFinder)
 		{
 			CleanScreen();
+
 			AskForCredentials(ref awsCredentials);
 			// return false if there isn't at least an accesskey and secretkey
 			if (awsCredentials == null)
@@ -282,7 +318,10 @@ namespace BlueDogeTools.panic_at_the_loadbalancer
 			AskForRegion();
 			AskForTargettedMachine(ref awsCredentials, ref eccInstanceFinder);
 			AskForLoadbalancerInfo();
-			AskForHealthcheckScript();
+			AskForHealthcheckScript(); // *TODO potentially rename this method
+			AskAboutMode();
+
+			CleanScreen();
 
 			return true;
 		}
