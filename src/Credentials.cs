@@ -1,5 +1,5 @@
 ﻿// Originally created by Elizabeth Clements
-// Copyright and License can be found in the LICENSE file or at the github (https://github.com/BlueDoge/panic-at-the-disco/)
+// Copyright and License can be found in the LICENSE file or at the github (https://github.com/BlueDoge/panic-at-the-loadbalancer/)
 
 using System;
 using System.Security;
