@@ -53,9 +53,8 @@ namespace BlueDogeTools.panic_at_the_loadbalancer
 
 			Utilities.WriteLog("SecureShell", String.Format("Connecting to {0}...", targetIpAddress));
 
-
-			// definitely need to do this differently but this effectively gets what I'm trying to do... so far
-			using (var c = new SftpClient(targetIpAddress, username.UseDecryptedSecureString(s => { return s; }), password.UseDecryptedSecureString(s => { return s; })))
+			// Get the username, then get the password, and pass back the SftpClient to 'c'
+			using (var c = username.UseDecryptedSecureString(userStr => { return password.UseDecryptedSecureString(passStr => { return new SftpClient(targetIpAddress, userStr, passStr); }); }))
 			{
 				c.KeepAliveInterval = TimeSpan.FromSeconds(60);
 				c.ConnectionInfo.Timeout = TimeSpan.FromMinutes(180);
@@ -63,7 +62,7 @@ namespace BlueDogeTools.panic_at_the_loadbalancer
 				c.UploadFile(File.OpenRead(targetScriptFilepath), "/tmp/bluedoge.patlb.script.sh");
 				c.Disconnect();
 			} // c.Dispose()
-			using (var c = new SshClient(targetIpAddress, username.UseDecryptedSecureString(s => { return s; }), password.UseDecryptedSecureString(s => { return s; })))
+			using (var c = username.UseDecryptedSecureString(userStr => { return password.UseDecryptedSecureString(passStr => { return new SshClient(targetIpAddress, userStr, passStr); }); }))
 			{
 				c.Connect();
 				c.RunCommand("cat /tmp/bluedoge.patlb.script.sh | sh > /tmp/bluedoge.patlb.transaction.log");
