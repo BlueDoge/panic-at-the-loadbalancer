@@ -1,6 +1,8 @@
 ﻿// Originally created by Elizabeth Clements
 // Copyright and License can be found in the LICENSE file or at the github (https://github.com/BlueDoge/panic-at-the-loadbalancer/)
 
+using System;
+using System.Runtime.InteropServices;
 using System.Reflection;
 using System.Security;
 
@@ -17,7 +19,7 @@ namespace BlueDogeTools.panic_at_the_loadbalancer
 		public static void WriteList(string[] OrderedList)
 		{
 			Int32 iter = 1;
-			foreach(var element in OrderedList)
+			foreach (var element in OrderedList)
 			{
 				Console.WriteLine("{0}. {1}", iter++, element);
 			}
@@ -32,14 +34,28 @@ namespace BlueDogeTools.panic_at_the_loadbalancer
 		{
 			SecureString secureLine = new SecureString();
 			var keyData = Console.ReadKey(bOverride);
-			while(keyData.Key != ConsoleKey.Enter)
+			while (keyData.Key != ConsoleKey.Enter)
 			{
-				secureLine.AppendChar(keyData.KeyChar);
-				keyData = Console.ReadKey(bOverride);
-				if(bAddChars && bOverride)
+				bool bIsValidChar = keyData.KeyChar.IsValidKeyboardCharacter();
+				if (keyData.Key == ConsoleKey.Backspace)
 				{
-					Console.Write(charToAdd); // would add *'s if defaulted
+					secureLine.RemoveAt(secureLine.Length - 1);
+					// if we're not overriding, or we are and adding characters...
+					// we should remove the character added
+					if (!bOverride || (bOverride && bAddChars))
+					{
+						Console.Write("\b \b");
+					}
 				}
+				if (bIsValidChar)
+				{
+					if (bAddChars && bOverride)
+					{
+						Console.Write(charToAdd); // would add *'s if defaulted
+					}
+					secureLine.AppendChar(keyData.KeyChar);
+				}
+				keyData = Console.ReadKey(bOverride);
 			}
 			// the new line was consumed.
 			Console.Write('\n');
@@ -83,6 +99,83 @@ namespace BlueDogeTools.panic_at_the_loadbalancer
 
 			// defaults: US West (Oregon)
 			return Amazon.RegionEndpoint.USWest2;
+		}
+
+		public static void ClearScreen()
+		{
+			Console.Clear();
+		}
+
+		public static void WriteHeader()
+		{
+			ClearScreen();
+			Console.WriteLine("Secure Shell Example");
+			Console.WriteLine("Created by Liz Clements in 2022");
+			Console.Write("\n\n");
+		}
+
+		public static void HardError<T>(object? origin, string message) where T : Exception
+		{
+			Console.Error.WriteLine(message);
+			string exceptionMessage = String.Format("Name: {0}\nMessage: {1}", origin == null ? "null" : origin.GetType().FullName, message).ToString();
+			throw (T)Activator.CreateInstance(typeof(T), new object[] { exceptionMessage }) ?? new Exception(exceptionMessage);
+		}
+	}
+
+	public static class CharExtentions
+	{
+		// is valid keyboard entry
+		public static bool IsValidKeyboardCharacter(this char test)
+		{
+			return test != '\u0000';
+		}
+	}
+
+	public static class StringExtensions
+	{
+		public static T UseDecryptedSecureString<T>(this SecureString secureString, Func<string, T> action)
+		{
+			var length = secureString.Length;
+			var sourcePtr = IntPtr.Zero;
+
+			// Create an empty string of the correct size and pin it so the collector can't copy it all over the place.
+			var plainString = new string('\0', length);
+			var plainStringHandler = GCHandle.Alloc(plainString, GCHandleType.Pinned);
+
+			var insecureStringPointer = plainStringHandler.AddrOfPinnedObject();
+
+			try
+			{
+				// Create a basic string of the secure string.
+				sourcePtr = Marshal.SecureStringToBSTR(secureString);
+
+				// loop through the basic string and populate the managed string
+				for (var i = 0; i < secureString.Length; i++)
+				{
+					var unicodeChar = Marshal.ReadInt16(sourcePtr, i * 2);
+					Marshal.WriteInt16(insecureStringPointer, i * 2, unicodeChar);
+				}
+
+				return action(plainString);
+			}
+			finally
+			{
+				// clear the managed string and then unpin for GC
+				Marshal.Copy(new byte[length * 2], 0, insecureStringPointer, length * 2);
+				plainStringHandler.Free();
+
+				// free and clear the basic string
+				Marshal.ZeroFreeBSTR(sourcePtr);
+			}
+		}
+
+		public static void UseDecryptedSecureString(this SecureString secureString, Action<string> action)
+		{
+			UseDecryptedSecureString(secureString, s =>
+			{
+				action(s);
+				return 0;
+			});
 		}
 	}
 }
