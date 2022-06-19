@@ -114,11 +114,14 @@ namespace BlueDogeTools.panic_at_the_loadbalancer
 			Console.Write("\n\n");
 		}
 
-		public static void HardError<T>(object? origin, string message) where T : Exception
+		public static void HardError(object? origin, string message)
 		{
-			Console.Error.WriteLine(message);
-			string exceptionMessage = String.Format("Name: {0}\nMessage: {1}", origin == null ? "null" : origin.GetType().FullName, message).ToString();
-			throw (T)Activator.CreateInstance(typeof(T), new object[] { exceptionMessage }) ?? new Exception(exceptionMessage);
+			origin.HardError<Exception>(message);
+		}
+
+		public static void HardError<T>(this object? origin, string message)
+		{
+			origin.HardError<T>(message);
 		}
 	}
 }
