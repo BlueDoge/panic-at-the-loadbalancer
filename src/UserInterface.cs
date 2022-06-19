@@ -34,7 +34,7 @@ namespace BlueDogeTools.panic_at_the_loadbalancer
 		{
 			if(GivenTargetId == null)
 			{
-				throw new Exception("Error: instance id is not yet resolved.");
+				this.HardError<NullReferenceException>("Error: instance id is not yet resolved.");
 			}
 			return GivenTargetId;
 		}
@@ -43,7 +43,7 @@ namespace BlueDogeTools.panic_at_the_loadbalancer
 		{
 			if(GivenLoadbalancerTargetGroupArn == null)
 			{
-				throw new Exception("Error: ELB Target Group Arn not yet resolved.");
+				this.HardError<NullReferenceException>("Error: ELB Target Group Arn not yet resolved.");
 			}
 			return GivenLoadbalancerTargetGroupArn;
 		}
@@ -52,7 +52,7 @@ namespace BlueDogeTools.panic_at_the_loadbalancer
 		{
 			if (GivenTargetIpAddress == null)
 			{
-				throw new Exception("Error: ip address not yet resolved.");
+				this.HardError<NullReferenceException>("Error: ip address not yet resolved.");
 			}
 			return GivenTargetIpAddress;
 		}
@@ -61,7 +61,7 @@ namespace BlueDogeTools.panic_at_the_loadbalancer
 		{
 			if (GivenTargetPrivateIpAddress == null)
 			{
-				throw new Exception("Error: private ip address not yet resolved.");
+				this.HardError<NullReferenceException>("Error: private ip address not yet resolved.");
 			}
 			return GivenTargetPrivateIpAddress;
 		}
@@ -70,7 +70,7 @@ namespace BlueDogeTools.panic_at_the_loadbalancer
 		{
 			if (GivenScriptFilepath == null)
 			{
-				throw new Exception("Error: script filepath not yet resolved.");
+				this.HardError<NullReferenceException>("Error: script filepath not yet resolved.");
 			}
 			return GivenScriptFilepath;
 		}
@@ -84,7 +84,7 @@ namespace BlueDogeTools.panic_at_the_loadbalancer
 				bool result = Run(ref awsCredentials, ref eccInstanceFinder);
 				if (!result && awsCredentials == null)
 				{
-					throw new Exception("Error: failed to create credentials!");
+					this.HardError<NullReferenceException>("Error: failed to create credentials!");
 				}
 			}
 		}
@@ -143,7 +143,7 @@ namespace BlueDogeTools.panic_at_the_loadbalancer
 				SecureString secureData = Utilities.ReadSecureLine();
 				if(enteredData == null)
 				{
-					throw new Exception("Error: invalid session key provided.");
+					Utilities.HardError(this, "Error: invalid session key provided.");
 				}
 				sessionKey = secureData;
 			}
@@ -178,7 +178,7 @@ namespace BlueDogeTools.panic_at_the_loadbalancer
 			}
 			if(awsCredentials == null)
 			{
-				throw new NullReferenceException("Error: aws credentials not resolved!");
+				this.HardError<NullReferenceException>("Error: aws credentials not resolved!");
 			}
 			AskForSSHCredentials(ref awsCredentials);
 		}
@@ -221,7 +221,7 @@ namespace BlueDogeTools.panic_at_the_loadbalancer
 				string? IP = Console.ReadLine();
 				if(IP == null) // also check if it even is a valid ip address
 				{
-					throw new Exception("Invalid ip address provided.");
+					Utilities.HardError(this, "Invalid ip address provided.");
 				}
 				GivenTargetId = eccInstanceFinder.GetInstanceIDFromPublicIPAddress(IP);
 				GivenTargetIpAddress = IP;
@@ -232,7 +232,7 @@ namespace BlueDogeTools.panic_at_the_loadbalancer
 				string? IP = Console.ReadLine();
 				if(IP == null) // also check if it even is a valid ip address
 				{
-					throw new Exception("Invalid ip address provided.");
+					Utilities.HardError(this, "Invalid ip address provided.");
 				}
 				GivenTargetId = eccInstanceFinder.GetInstanceIDFromPrivateIPAddress(IP);
 				GivenTargetPrivateIpAddress = IP;
@@ -243,7 +243,7 @@ namespace BlueDogeTools.panic_at_the_loadbalancer
 				string? ID = Console.ReadLine();
 				if(ID == null) // also check if it even is a valid instance id [won't be perfect]
 				{
-					throw new Exception("Potentially invalid instance id provided");
+					Utilities.HardError(this, "Potentially invalid instance id provided");
 				}
 				GivenTargetId = ID;
 			}
@@ -255,7 +255,7 @@ namespace BlueDogeTools.panic_at_the_loadbalancer
 			string? Data = Console.ReadLine();
 			if (Data == null || Data.Trim() == "")
 			{
-				throw new Exception("Potentially invalid Target Group Arn provided.");
+				Utilities.HardError(this, "Potentially invalid Target Group Arn provided.");
 			}
 			else
 			{
@@ -313,7 +313,7 @@ namespace BlueDogeTools.panic_at_the_loadbalancer
 				}
 				else
 				{
-					throw new NullReferenceException("Error: no elb tg arn provided!");
+					this.HardError<NullReferenceException>("Error: no elb tg arn provided!");
 				}
 			}
 		}
