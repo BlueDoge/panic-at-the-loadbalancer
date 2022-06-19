@@ -71,7 +71,7 @@ namespace BlueDogeTools
 		{
 			Console.Error.WriteLine(message);
 			string exceptionMessage = String.Format("Name: {0}\nMessage: {1}", origin == null ? "null" : origin.GetType().FullName, message).ToString();
-			throw (T)Activator.CreateInstance(typeof(T), new object[] { exceptionMessage }) ?? new Exception(exceptionMessage);
+			throw (T?)Activator.CreateInstance(typeof(T), new object[] { exceptionMessage }) ?? new Exception(exceptionMessage);
 		}
 	}
 }
