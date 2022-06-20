@@ -4,6 +4,7 @@
 # This script assumes it is executing from the root directory, and is on a Windows OS
 
 
+$SolutionOrProjectName = "panic-at-the-loadbalancer.sln"
 $SourceRoot = "./src/"
 $ReleaseBinPath = "bin/Release/net6.0/"
 $PackagedPath = "./packaged/"
@@ -51,7 +52,7 @@ while(-not(Get-PackageIsCompiled) -and ($Steps -lt $MaximumCompileAttempts))
     # Move out of root, step into src
     Set-Location $SourceRoot
     "Building... Attempt($($Steps + 1) of $($MaximumCompileAttempts))"
-    Start-RawProcess -program "C:\Windows\System32\cmd.exe" -argumentString "/c `"dotnet build panic-at-the-loadbalancer.sln -c Release`"" -workingDirectory $SourceRoot -waitForExit
+    Start-RawProcess -program "C:\Windows\System32\cmd.exe" -argumentString ("/c `"dotnet build "+$SolutionOrProjectName+" -c Release`"") -workingDirectory $SourceRoot -waitForExit
     $Steps = $Steps + 1
     # Step back out to root
     Set-Location ".."
