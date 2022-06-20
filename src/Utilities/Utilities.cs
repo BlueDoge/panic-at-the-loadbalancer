@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 using System.Reflection;
 using System.Security;
 
-namespace BlueDogeTools.panic_at_the_loadbalancer
+namespace BlueDogeTools
 {
 	public static class Utilities
 	{
@@ -119,9 +119,10 @@ namespace BlueDogeTools.panic_at_the_loadbalancer
 			origin.HardError<Exception>(message);
 		}
 
-		public static void HardError<T>(this object? origin, string message)
+		public static Exception CreateException<T>(object? origin, string message) where T : Exception
 		{
-			origin.HardError<T>(message);
+			string exceptionMessage = String.Format("Name: {0}\nMessage: {1}", origin == null ? "null" : origin.GetType().FullName, message).ToString();
+			return (T?)Activator.CreateInstance(typeof(T), new object[] { exceptionMessage }) ?? new Exception(exceptionMessage);
 		}
 	}
 }

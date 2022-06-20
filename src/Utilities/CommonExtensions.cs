@@ -70,8 +70,7 @@ namespace BlueDogeTools
 		public static void HardError<T>(this object? origin, string message) where T : Exception
 		{
 			Console.Error.WriteLine(message);
-			string exceptionMessage = String.Format("Name: {0}\nMessage: {1}", origin == null ? "null" : origin.GetType().FullName, message).ToString();
-			throw (T?)Activator.CreateInstance(typeof(T), new object[] { exceptionMessage }) ?? new Exception(exceptionMessage);
+			throw Utilities.CreateException<T>(origin, message);
 		}
 	}
 }
