@@ -1,4 +1,5 @@
-# PatLB (Panic at the [elastic] LoadBalancer) - WORK IN PROGRESS
+# PatLB (Panic at the [elastic] LoadBalancer) - WIP
+Executes on Linux EC2 Instances via SSH.
 
 The intention of this toolkit is to give a System Operator the ability to do the following:
 - Optionally bring a selected EC2 instance off of an Elastic Load Balancer (ELB) Target Group
@@ -14,3 +15,10 @@ Requirements:
 - Needs .NET 6.0 Framework and Visual Studio 2022 on at least Windows 10
 
 If you've met the requirements: execute Packer.ps1 in Windows PowerShell (Optionally ISE).
+
+## Planned Features
+Near-term:
+- Executing PowerShell scripts on Windows EC2 Instances
+
+Long-term:
+- Supporting this toolkit to be compiled on Linux machines
