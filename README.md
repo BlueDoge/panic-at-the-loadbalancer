@@ -6,3 +6,10 @@ The intention of this toolkit is to give a System Operator the ability to do the
   - If healthy, continue
   - If unhealthy, do not continue, alert the System Operator and await input
 - Rejoin the EC2 instance to the original (or optionally different) ELB Target Group
+
+## Building and "Packaging" the Project
+Requirements:
+-Only works on Windows.
+-Needs .NET 6.0 Framework and Visual Studio 2022 on at least Windows 10
+
+If you've met the requirements: execute Packer.ps1 in Windows PowerShell (Optionally ISE).
