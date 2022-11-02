@@ -1,4 +1,8 @@
-# PatLB (Panic at the [elastic] LoadBalancer) - WIP
+# PatLB (Panic at the [elastic] LoadBalancer) - DEPRECATED
+## Alternative repository
+[AWS Toolkit GUI](https://github.com/BlueDoge/AWS-Toolkit-GUI)
+
+## General
 Executes on Linux EC2 Instances via SSH.
 
 The intention of this toolkit is to give a System Operator the ability to do the following:
